@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 
 const guardians = [
   {
@@ -74,62 +75,74 @@ const guardians = [
 export default function Home() {
   const [paymentOption, setPaymentOption] = useState("single");
 
+  const buttonId =
+    paymentOption === "single" ? "UMRFEP89V2AXE" : "8E93Z5RVPQDM4";
+
   return (
-    <div className="p-4">
-      <div className="mb-8">
-        <h2 className="text-xl font-semibold mb-2">Acesso Premium</h2>
-        <div className="mb-2">
-          <label className="mr-4">
-            <input
-              type="radio"
-              value="single"
-              checked={paymentOption === "single"}
-              onChange={() => setPaymentOption("single")}
-              className="mr-2"
-            />
-            Sessão única – R$ 30,00
-          </label>
-          <label>
-            <input
-              type="radio"
-              value="monthly"
-              checked={paymentOption === "monthly"}
-              onChange={() => setPaymentOption("monthly")}
-              className="mr-2"
-            />
-            Plano mensal – R$ 127,00
-          </label>
+    <PayPalScriptProvider options={{
+      "client-id": "BAAaVkUxaVBs6tRyAIsC5SzH1jhrwK-GialFVALkLGvy6BVhXUENAbFKPsHsU23Sj2bs_PxNIzZ5IzAYCw",
+      components: "buttons",
+      currency: "BRL"
+    }}>
+      <div className="p-4">
+        <div className="mb-8">
+          <h2 className="text-xl font-semibold mb-2">Acesso Premium</h2>
+          <div className="mb-2">
+            <label className="mr-4">
+              <input
+                type="radio"
+                value="single"
+                checked={paymentOption === "single"}
+                onChange={() => setPaymentOption("single")}
+                className="mr-2"
+              />
+              Sessão única – R$ 30,00
+            </label>
+            <label>
+              <input
+                type="radio"
+                value="monthly"
+                checked={paymentOption === "monthly"}
+                onChange={() => setPaymentOption("monthly")}
+                className="mr-2"
+              />
+              Plano mensal – R$ 127,00
+            </label>
+          </div>
+          <PayPalButtons
+            createOrder={(data, actions) => {
+              return actions.order.create({
+                purchase_units: [
+                  {
+                    amount: {
+                      value: paymentOption === "single" ? "30.00" : "127.00"
+                    }
+                  }
+                ]
+              });
+            }}
+            onApprove={(data, actions) => {
+              return actions.order.capture().then((details) => {
+                alert("Pagamento aprovado por " + details.payer.name.given_name);
+              });
+            }}
+          />
         </div>
-        {paymentOption === "single" ? (
-          <div id="paypal-container-UMRFEP89V2AXE"></div>
-        ) : (
-          <div id="paypal-container-8E93Z5RVPQDM4"></div>
-        )}
-      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {guardians.map((ia) => (
-          <Card key={ia.id} className="rounded-2xl shadow-md p-4">
-            <CardContent>
-              <h2 className="text-xl font-semibold mb-2">{ia.name}</h2>
-              <p className="text-base mb-4">{ia.description}</p>
-              <Button asChild>
-                <a href={ia.route}>Acessar</a>
-              </Button>
-            </CardContent>
-          </Card>
-        ))}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {guardians.map((ia) => (
+            <Card key={ia.id} className="rounded-2xl shadow-md p-4">
+              <CardContent>
+                <h2 className="text-xl font-semibold mb-2">{ia.name}</h2>
+                <p className="text-base mb-4">{ia.description}</p>
+                <Button asChild>
+                  <a href={ia.route}>Acessar</a>
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
-
-      <script src="https://www.paypal.com/sdk/js?client-id=BAAaVkUxaVBs6tRyAIsC5SzH1jhrwK-GialFVALkLGvy6BVhXUENAbFKPsHsU23Sj2bs_PxNIzZ5IzAYCw&components=hosted-buttons&disable-funding=venmo&currency=BRL"></script>
-      <script>
-        paypal.HostedButtons({
-          hostedButtonId: "UMRFEP89V2AXE",
-        }).render("#paypal-container-UMRFEP89V2AXE")
-        paypal.HostedButtons({
-          hostedButtonId: "8E93Z5RVPQDM4",
-        }).render("#paypal-container-8E93Z5RVPQDM4")
-      </script>
-    </div>
+    </PayPalScriptProvider>
   );
 }
