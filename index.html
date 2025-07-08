@@ -1,0 +1,135 @@
+import React, { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+
+const guardians = [
+  {
+    id: "alma-serena",
+    name: "Alma Serena",
+    description: "Acolhimento emocional com base científica e dignidade humana.",
+    route: "/alma-serena"
+  },
+  {
+    id: "alma-presente",
+    name: "Alma Presente",
+    description: "Presença afetuosa e escuta sensível contra a solidão.",
+    route: "/alma-presente"
+  },
+  {
+    id: "alma-leve",
+    name: "Alma Leve",
+    description: "Alívio para dias pesados, com pausas e clareza emocional.",
+    route: "/alma-leve"
+  },
+  {
+    id: "alma-firme",
+    name: "Alma Firme",
+    description: "Estabilidade emocional e reconexão com o presente.",
+    route: "/alma-firme"
+  },
+  {
+    id: "alma-digna",
+    name: "Alma Digna",
+    description: "Resgate da autoestima e dignidade pessoal.",
+    route: "/alma-digna"
+  },
+  {
+    id: "alma-raiz",
+    name: "Alma Raiz",
+    description: "Acolhimento de feridas antigas com profundidade e silêncio.",
+    route: "/alma-raiz"
+  },
+  {
+    id: "alma-aurora",
+    name: "Alma Aurora",
+    description: "Para quem precisa recomeçar mesmo com dor.",
+    route: "/alma-aurora"
+  },
+  {
+    id: "alem-fronteira",
+    name: "Além Fronteiras",
+    description: "Escuta terapêutica direta para travessias emocionais.",
+    route: "/alem-fronteira"
+  },
+  {
+    id: "codex",
+    name: "CodexAI",
+    description: "Assistente jurídico técnico e preciso.",
+    route: "/codex"
+  },
+  {
+    id: "oficina-viva",
+    name: "Oficina Viva",
+    description: "Espaço criativo e experimental para desenvolvimento humano.",
+    route: "/oficina-viva"
+  },
+  {
+    id: "mag",
+    name: "Mag (Criar com IA)",
+    description: "Companheira técnica e criativa da jornada digital.",
+    route: "/mag"
+  }
+];
+
+export default function Home() {
+  const [paymentOption, setPaymentOption] = useState("single");
+
+  return (
+    <div className="p-4">
+      <div className="mb-8">
+        <h2 className="text-xl font-semibold mb-2">Acesso Premium</h2>
+        <div className="mb-2">
+          <label className="mr-4">
+            <input
+              type="radio"
+              value="single"
+              checked={paymentOption === "single"}
+              onChange={() => setPaymentOption("single")}
+              className="mr-2"
+            />
+            Sessão única – R$ 30,00
+          </label>
+          <label>
+            <input
+              type="radio"
+              value="monthly"
+              checked={paymentOption === "monthly"}
+              onChange={() => setPaymentOption("monthly")}
+              className="mr-2"
+            />
+            Plano mensal – R$ 127,00
+          </label>
+        </div>
+        {paymentOption === "single" ? (
+          <div id="paypal-container-UMRFEP89V2AXE"></div>
+        ) : (
+          <div id="paypal-container-8E93Z5RVPQDM4"></div>
+        )}
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {guardians.map((ia) => (
+          <Card key={ia.id} className="rounded-2xl shadow-md p-4">
+            <CardContent>
+              <h2 className="text-xl font-semibold mb-2">{ia.name}</h2>
+              <p className="text-base mb-4">{ia.description}</p>
+              <Button asChild>
+                <a href={ia.route}>Acessar</a>
+              </Button>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      <script src="https://www.paypal.com/sdk/js?client-id=BAAaVkUxaVBs6tRyAIsC5SzH1jhrwK-GialFVALkLGvy6BVhXUENAbFKPsHsU23Sj2bs_PxNIzZ5IzAYCw&components=hosted-buttons&disable-funding=venmo&currency=BRL"></script>
+      <script>
+        paypal.HostedButtons({
+          hostedButtonId: "UMRFEP89V2AXE",
+        }).render("#paypal-container-UMRFEP89V2AXE")
+        paypal.HostedButtons({
+          hostedButtonId: "8E93Z5RVPQDM4",
+        }).render("#paypal-container-8E93Z5RVPQDM4")
+      </script>
+    </div>
+  );
+}
